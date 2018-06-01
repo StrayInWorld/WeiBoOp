@@ -86,6 +86,13 @@ class weiBoOpClass(object):
             self.driver.execute_script("window.scrollTo(0, 50);")
         print("执行了移动鼠标")
 
+    #发表评论
+    def writeComment(self,word,num):
+        self.driver.find_element_by_tag_name("textarea").send_keys(word + str(num))  # 评论内容
+        print("已发表评论")
+        self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[3]/a').click()  # 发送评论
+        print("已发送评论")
+
 
     def doOp(self,findKeyWord):
         self.driver.get('https://m.weibo.cn/')
@@ -114,6 +121,7 @@ class weiBoOpClass(object):
         if len(commendlist)==0:
             self.movePage()
         for i in range(len(commendlist)):
+            print("-----------------"+str(i)+"-----------------")
             # 下面重新获取"转发，评论，赞" 是因为进行下面一系列操作之后，返回到主页面时，内容已经改变，所以需要重新获取
             newcommendlist = self.driver.find_elements_by_css_selector(".m-ctrl-box.m-box-center-a")
             btnClick=newcommendlist[i].find_elements_by_css_selector(".m-diy-btn.m-box-col.m-box-center.m-box-center-a")[1]
@@ -126,10 +134,7 @@ class weiBoOpClass(object):
             print("已点击外部评论")
             #有1条评论以上的才需要二次点击评论
             if not self.is_element_exist('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]'):
-                self.driver.find_element_by_tag_name("textarea").send_keys(r"嗯嗯 " + str(i))  # 评论内容
-                print("已发表评论")
-                self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[3]/a').click()  # 发送评论
-                print("已发送评论")
+                self.writeComment("嗯嗯",i)
                 # 弹框处理
                 if self.is_element_exist('//*[@id="app"]/div[2]/div[1]/div[2]/footer/div/a'):
                     self.handlerAlert()
@@ -137,10 +142,7 @@ class weiBoOpClass(object):
                 continue
             self.driver.find_element_by_xpath('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]').click()  # 内部评论
             print("已点击内部评论")
-            self.driver.find_element_by_tag_name("textarea").send_keys(r"谔谔21 " + str(i))  # 评论内容
-            print("已发表评论")
-            self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[3]/a').click()  # 发送评论
-            print("已发送评论")
+            self.writeComment("嗯嗯", i)
             #弹框处理
             if self.is_element_exist('//*[@id="app"]/div[2]/div[1]/div[2]/footer/div/a'):
                 self.handlerAlert()
