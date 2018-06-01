@@ -79,9 +79,12 @@ class weiBoOpClass(object):
         commendlist = self.driver.find_elements_by_css_selector(".m-ctrl-box.m-box-center-a")
         print(len(commendlist))
         for i in range(len(commendlist)):
-            print("commend=", commendlist[i])
+            divGet=commendlist[i].find_elements_by_css_selector(".m-diy-btn.m-box-col.m-box-center.m-box-center-a")[1]
+            print("divGet=",divGet.tag_name)
+            print("divGetValue=",divGet.text)
             # 下面重新获取"转发，评论，赞" 是因为进行下面一系列操作之后，返回到主页面时，内容已经改变，所以需要重新获取
             newcommendlist = self.driver.find_elements_by_css_selector(".m-ctrl-box.m-box-center-a")
+            print("commend=", newcommendlist[i])
             newcommendlist[i].click()  # 外部评论
             print("已点击外部评论")
             #有1条评论以上的才需要二次点击评论
