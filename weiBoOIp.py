@@ -9,7 +9,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
 from selenium.webdriver import ActionChains
 
 
@@ -22,13 +22,11 @@ def OpenBaiDu():
 
 
 class weiBoOpClass(object):
-    def __init__(self,driver):
+    def __init__(self,driver,url,findStr):
          self.driver=driver
-
-    def startOp(self,url,keyWord):
-        self.driver.get(url)
-        self.driver.implicitly_wait(3)
-        self.isHaveCookiesFile(keyWord)
+         self.driver.get(url)
+         self.driver.implicitly_wait(6)
+         self.isHaveCookiesFile(findStr)
 
     def isHaveCookiesFile(self,findStr):
         if os.path.isfile("cookies.json"):
@@ -64,18 +62,28 @@ class weiBoOpClass(object):
     def handlerAlert(self):
         self.driver.find_element_by_xpath('//*[@id="app"]/div[2]/div[1]/div[2]/footer/div/a').click()
         print("已确定")
-        self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[1]').click()
-        print("关闭")
+        try:
+            self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[1]').click()
+            print("关闭")
+        except WebDriverException:
+            self.movePage(1)
+            self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[1]').click()
+            print("关闭")
+
         if self.is_element_exist('//*[@id="app"]/div[1]/div/div[1]/div/div[1]/div'):
             self.driver.find_element_by_css_selector(
                 '#app > div:nth-child(1) > div > div.m-top-bar.m-panel.m-container-max.m-topbar-max > div > div.nav-left > div').click()
             print("已返回")
 
     #移动鼠标
-    def movePage(self):
+    def movePage(self,height):
         time.sleep(2)
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        print("执行了")
+        if height is None:
+            self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+        else:
+            self.driver.execute_script("window.scrollTo(0, 50);")
+        print("执行了移动鼠标")
+
 
     def doOp(self,findKeyWord):
         self.driver.get('https://m.weibo.cn/')
@@ -95,7 +103,7 @@ class weiBoOpClass(object):
             })
         # 再次访问页面，便可实现免登陆访问
         self.driver.get('https://m.weibo.cn/')
-        self.driver.implicitly_wait(10)
+        self.driver.implicitly_wait(6)
         self.driver.find_element_by_class_name("iconf_navbar_search").click()  # 搜索按钮
         self.driver.find_element_by_class_name("forSearch").send_keys(findKeyWord + Keys.RETURN)  # 搜索文字
 
@@ -107,9 +115,12 @@ class weiBoOpClass(object):
             # 下面重新获取"转发，评论，赞" 是因为进行下面一系列操作之后，返回到主页面时，内容已经改变，所以需要重新获取
             newcommendlist = self.driver.find_elements_by_css_selector(".m-ctrl-box.m-box-center-a")
             btnClick=newcommendlist[i].find_elements_by_css_selector(".m-diy-btn.m-box-col.m-box-center.m-box-center-a")[1]
-            btnClick.click()  # 外部评论
-            # print(btnClick.tag_name)
-            # print(btnClick.text)
+            try:
+               btnClick.click()  # 外部评论
+            except WebDriverException:
+               self.movePage(1)
+               btnClick.click()
+
             print("已点击外部评论")
             #有1条评论以上的才需要二次点击评论
             if not self.is_element_exist('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]'):
@@ -136,15 +147,13 @@ class weiBoOpClass(object):
             print("已返回")
         self.driver.quit()
 
-
-classDriver=weiBoOpClass(webdriver.Chrome())
 try:
-    classDriver.startOp("https://m.weibo.cn/", "范冰冰")
+    classDriver=weiBoOpClass(webdriver.Chrome(),"https://m.weibo.cn/","张柏芝")
+except WebDriverException:
+    print("没有知道位置")
 finally:
-    classDriver.driver.quit()
     print("出错了，重新运行了")
-    weiBoOpClass(webdriver.Chrome()).startOp("https://m.weibo.cn/", "范冰冰")
-
+    classDriver = weiBoOpClass(webdriver.Chrome(), "https://m.weibo.cn/", "张柏芝")
 
 
 
