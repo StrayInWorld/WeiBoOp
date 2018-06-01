@@ -16,21 +16,6 @@ def OpenBaiDu():
     driver.implicitly_wait(30)
     driver.quit()
 
-
-# 记录cookie
-def recordCookie():
-    driver = webdriver.Chrome()
-    driver.get('https://m.weibo.cn/')
-    # 获取cookie并通过json模块将dict转化成str
-    driver.implicitly_wait(30)
-    dictCookies = driver.get_cookies()
-    jsonCookies = json.dumps(dictCookies)
-    # 登录完成后，将cookie保存到本地文件
-    with open('cookies.json', 'w') as f:
-        f.write(jsonCookies)
-
-    driver.quit()
-
 # recordCookie()
 #Login1("带带大师兄")
 
@@ -48,7 +33,7 @@ class weiBoOpClass(object):
         else:
             print("cookies不存在")
             try:
-                WebDriverWait(self.driver, 20, 0.5).until(EC.presence_of_element_located((By.LINK_TEXT, '发现')))
+                WebDriverWait(self.driver, 60, 0.5).until(EC.presence_of_element_located((By.LINK_TEXT, '发现')))
                 dictCookies = self.driver.get_cookies()
                 jsonCookies = json.dumps(dictCookies)
                 # 登录完成后，将cookie保存到本地文件
