@@ -16,20 +16,18 @@ def OpenBaiDu():
     driver.implicitly_wait(30)
     driver.quit()
 
-# recordCookie()
-#Login1("带带大师兄")
 
 class weiBoOpClass(object):
-    def __init__(self,driver,url):
+    def __init__(self,driver,url,findStr):
          self.driver=driver
          self.driver.get(url)
-         self.driver.implicitly_wait(10)
-         self.isHaveCookiesFile()
+         self.driver.implicitly_wait(6)
+         self.isHaveCookiesFile(findStr)
 
-    def isHaveCookiesFile(self):
+    def isHaveCookiesFile(self,findStr):
         if os.path.isfile("cookies.json"):
             print("cookies存在，执行正常流程")
-            self.doOp("带带大师兄")
+            self.doOp(findStr)
         else:
             print("cookies不存在")
             try:
@@ -39,7 +37,7 @@ class weiBoOpClass(object):
                 # 登录完成后，将cookie保存到本地文件
                 with open('cookies.json', 'w') as f:
                     f.write(jsonCookies)
-                self.doOp("带带大师兄")
+                self.doOp(findStr)
             finally:
                 self.driver.close()
 
@@ -86,25 +84,30 @@ class weiBoOpClass(object):
             newcommendlist = self.driver.find_elements_by_css_selector(".m-ctrl-box.m-box-center-a")
             newcommendlist[i].click()  # 外部评论
             print("已点击外部评论")
-            self.driver.find_element_by_xpath(
-                '// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]').click()  # 内部评论
-            print("已点击内部评论")
-            self.driver.find_element_by_tag_name("textarea").send_keys(r"谔谔 " + str(i))  # 评论内容
+            #有1条评论以上的才需要二次点击评论
+            if self.is_element_exist('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]'):
+                self.driver.find_element_by_xpath('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]').click()  # 内部评论
+                print("已点击内部评论")
+            self.driver.find_element_by_tag_name("textarea").send_keys(r"谔谔21 " + str(i))  # 评论内容
             print("已发表评论")
             self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[3]/a').click()  # 发送评论
             print("已发送评论")
-            # btnAlert = driver.find_element_by_css_selector(css_selector=".m-btn.m-btn-white.m-btn-text-orange")
-            # if len(btnAlert) == 1:
-            #     driver.find_element_by_css_selector(".m-btn.m-btn-white.m-btn-text-orange").click()
-            #     print("有弹框")
-            #     driver.find_element_by_css_selector(".m-box.m-flex-grow1.m-alnf-sth.m-aln-center.m-flex-base0").click()
-            #     print("已关闭")
-            #     break
-            self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/div[1]/div/div[1]/div').click()
-            print("已返回")
+            #弹框处理
+            if self.is_element_exist('//*[@id="app"]/div[2]/div[1]/div[2]/footer/div/a'):
+                self.driver.find_element_by_xpath('//*[@id="app"]/div[2]/div[1]/div[2]/footer/div/a').click()
+                print("已确定")
+                self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[1]').click()
+                print("关闭")
+                if self.is_element_exist('//*[@id="app"]/div[1]/div/div[1]/div/div[1]/div'):
+                    self.driver.find_element_by_css_selector('#app > div:nth-child(1) > div > div.m-top-bar.m-panel.m-container-max.m-topbar-max > div > div.nav-left > div').click()
+                    print("已返回")
+                continue
+            if self.is_element_exist('//*[@id="app"]/div[1]/div/div[1]/div/div[1]/div'):
+                self.driver.find_element_by_css_selector('#app > div:nth-child(1) > div > div.m-top-bar.m-panel.m-container-max.m-topbar-max > div > div.nav-left > div').click()
+                print("已返回")
         self.driver.quit()
 
-classDriver=weiBoOpClass(webdriver.Chrome(),"https://m.weibo.cn/")
+classDriver=weiBoOpClass(webdriver.Chrome(),"https://m.weibo.cn/","范冰冰")
 
 
 
