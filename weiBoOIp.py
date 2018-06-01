@@ -5,12 +5,11 @@ import os
 import time
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 from selenium.common.exceptions import WebDriverException
-from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 def OpenBaiDu():
@@ -151,15 +150,16 @@ class weiBoOpClass(object):
             print("已返回")
         self.driver.quit()
 
-classDriver=weiBoOpClass(webdriver.Chrome())
-try:
-    classDriver.startOp("https://m.weibo.cn/", "张柏芝")
-except WebDriverException:
-    print("没有知道位置")
-finally:
-    print("出错了，重新运行了")
-    classDriver.driver.quit()
-    weiBoOpClass(webdriver.Chrome()).startOp("https://m.weibo.cn/", "张柏芝")
+keyWord="鹿晗"
+getUrl="https://m.weibo.cn/"
 
-
-
+while True:
+    classDriver = weiBoOpClass(webdriver.Chrome())
+    try:
+        classDriver.startOp(getUrl, keyWord)
+    except WebDriverException:
+        print("没有找到位置")
+    finally:
+        print("出错了，重新运行了")
+        classDriver.driver.quit()
+        weiBoOpClass(webdriver.Chrome()).startOp(getUrl, keyWord)
