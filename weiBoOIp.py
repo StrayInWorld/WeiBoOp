@@ -22,11 +22,13 @@ def OpenBaiDu():
 
 
 class weiBoOpClass(object):
-    def __init__(self,driver,url,findStr):
+    def __init__(self,driver):
          self.driver=driver
-         self.driver.get(url)
-         self.driver.implicitly_wait(6)
-         self.isHaveCookiesFile(findStr)
+
+    def startOp(self,url,findStr):
+        self.driver.get(url)
+        self.driver.implicitly_wait(6)
+        self.isHaveCookiesFile(findStr)
 
     def isHaveCookiesFile(self,findStr):
         if os.path.isfile("cookies.json"):
@@ -124,7 +126,7 @@ class weiBoOpClass(object):
             print("已点击外部评论")
             #有1条评论以上的才需要二次点击评论
             if not self.is_element_exist('// *[ @ id = "app"] / div[1] / div / div[2] / div / div / footer / div[2]'):
-                self.driver.find_element_by_tag_name("textarea").send_keys(r"谔谔21 " + str(i))  # 评论内容
+                self.driver.find_element_by_tag_name("textarea").send_keys(r"嗯嗯 " + str(i))  # 评论内容
                 print("已发表评论")
                 self.driver.find_element_by_xpath('//*[@id="app"]/div[1]/div/header/div[3]/a').click()  # 发送评论
                 print("已发送评论")
@@ -147,13 +149,15 @@ class weiBoOpClass(object):
             print("已返回")
         self.driver.quit()
 
+classDriver=weiBoOpClass(webdriver.Chrome())
 try:
-    classDriver=weiBoOpClass(webdriver.Chrome(),"https://m.weibo.cn/","张柏芝")
+    classDriver.startOp("https://m.weibo.cn/", "张柏芝")
 except WebDriverException:
     print("没有知道位置")
 finally:
     print("出错了，重新运行了")
-    classDriver = weiBoOpClass(webdriver.Chrome(), "https://m.weibo.cn/", "张柏芝")
+    classDriver.driver.quit()
+    weiBoOpClass(webdriver.Chrome()).startOp("https://m.weibo.cn/", "张柏芝")
 
 
 
