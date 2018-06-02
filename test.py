@@ -1,18 +1,16 @@
-# coding=utf-8
 from selenium import webdriver
-import time
+from selenium.webdriver.common.keys import Keys
+import random
 
-# 访问百度
-driver = webdriver.Chrome()
-driver.get("http://www.baidu.com")
+def OpenBaiDu():
+    driver = webdriver.Chrome()
+    driver.get('http://www.baidu.com')
+    driver.find_element_by_id("kw").send_keys("seleniumhq" + Keys.RETURN)
+    driver.implicitly_wait(30)
+    driver.quit()
 
-# 搜索
-driver.find_element_by_id("kw").send_keys("selenium")
-driver.find_element_by_id("su").click()
-time.sleep(3)
+def testRandom():
+    print("randrange(1,100, 2) : ", random.randrange(1, 100, 2))
 
-driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-print("执行了")
-time.sleep(3)
-
-driver.quit()
+for i in range(101):
+    print(random.choice((1,23,3)))
